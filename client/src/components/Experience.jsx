@@ -87,7 +87,7 @@ const Experience = () => {
                             <img
                               src={getImageUrl(exp.companyLogo)}
                               alt={exp.organization}
-                              className="w-10 h-10 rounded-lg object-cover border border-gray-100"
+                              className="w-10 h-10 rounded-lg object-cover border border-gray-100 shrink-0"
                             />
                           )}
                           <div>
@@ -111,10 +111,10 @@ const Experience = () => {
                       </p>
 
                       {exp.responsibilities && exp.responsibilities.length > 0 && (
-                        <ul className="mt-4 space-y-1.5">
+                        <ul className="mt-3 space-y-1">
                           {exp.responsibilities.map((resp, i) => (
-                            <li key={i} className="flex items-start gap-2 text-xxs text-gray-500">
-                              <span className="text-primary mt-0.5 font-bold">•</span>
+                            <li key={i} className="flex items-start gap-2 text-[11px] text-gray-500 leading-normal">
+                              <span className="text-primary mt-1 font-bold select-none">•</span>
                               <span>{resp}</span>
                             </li>
                           ))}
