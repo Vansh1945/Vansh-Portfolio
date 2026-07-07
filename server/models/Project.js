@@ -1,25 +1,10 @@
 import mongoose from 'mongoose';
 
-const slugify = (text) => {
-  return text
-    .toString()
-    .toLowerCase()
-    .trim()
-    .replace(/\s+/g, '-')
-    .replace(/[^\w\-]+/g, '')
-    .replace(/\-\-+/g, '-');
-};
-
 const projectSchema = new mongoose.Schema({
   title: {
     type: String,
     required: [true, 'Project title is required'],
     trim: true,
-  },
-  slug: {
-    type: String,
-    unique: true,
-    index: true,
   },
   projectOwnership: {
     type: String,
@@ -53,7 +38,7 @@ const projectSchema = new mongoose.Schema({
   technologies: {
     type: [String],
     validate: {
-      validator: function(array) {
+      validator: function (array) {
         return array && array.length > 0;
       },
       message: 'At least one technology is required'
@@ -62,7 +47,7 @@ const projectSchema = new mongoose.Schema({
   features: {
     type: [String],
     validate: {
-      validator: function(array) {
+      validator: function (array) {
         return array && array.length > 0;
       },
       message: 'At least one project feature is required'
@@ -87,17 +72,9 @@ const projectSchema = new mongoose.Schema({
   },
   displayOrder: {
     type: Number,
-    default: 0,
   }
 }, {
   timestamps: true
-});
-
-projectSchema.pre('validate', function(next) {
-  if (this.title && !this.slug) {
-    this.slug = slugify(this.title);
-  }
-  next();
 });
 
 const Project = mongoose.model('Project', projectSchema);

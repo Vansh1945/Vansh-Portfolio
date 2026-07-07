@@ -109,7 +109,7 @@ const ProjectsPage = () => {
                   {/* Card CTA Actions */}
                   <div className="p-5 border-t border-gray-50 flex gap-2 mt-auto">
                     <Link
-                      to={`/projects/${project.slug}`}
+                      to={`/projects/${project._id}`}
                       className="flex-1 text-center py-2 border border-gray-200 hover:border-gray-300 hover:bg-gray-50 text-gray-700 font-bold text-xxs rounded-lg transition-colors"
                     >
                       View Details

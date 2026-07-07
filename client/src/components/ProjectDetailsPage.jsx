@@ -7,7 +7,7 @@ import { FiArrowLeft, FiGithub, FiExternalLink, FiCpu, FiCheckCircle } from 'rea
 import { Loader } from 'lucide-react';
 
 const ProjectDetailsPage = () => {
-  const { slug } = useParams();
+  const { id } = useParams();
   const navigate = useNavigate();
   const [project, setProject] = useState(null);
   const [related, setRelated] = useState([]);
@@ -21,7 +21,7 @@ const ProjectDetailsPage = () => {
     try {
       setLoading(true);
       setError('');
-      const res = await axios.get(`${API_URL}projects/${slug}`);
+      const res = await axios.get(`${API_URL}projects/${id}`);
       if (res.data && res.data.success) {
         const proj = res.data.data;
         setProject(proj);
@@ -47,7 +47,7 @@ const ProjectDetailsPage = () => {
 
   useEffect(() => {
     fetchProjectDetails();
-  }, [slug]);
+  }, [id]);
 
   if (loading) {
     return (
@@ -241,7 +241,7 @@ const ProjectDetailsPage = () => {
                   </div>
                   <div className="p-4 pt-0">
                     <Link
-                      to={`/projects/${relProj.slug}`}
+                      to={`/projects/${relProj._id}`}
                       className="w-full block text-center py-1.5 border border-gray-200 hover:border-gray-300 text-gray-600 font-bold text-xxs rounded-lg transition-colors"
                     >
                       View Project

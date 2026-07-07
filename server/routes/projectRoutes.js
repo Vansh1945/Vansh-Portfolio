@@ -2,7 +2,7 @@ import express from 'express';
 import { 
   getProjects, 
   getFeaturedProjects, 
-  getProjectBySlug, 
+  getProjectById, 
   createProject, 
   updateProject, 
   deleteProject 
@@ -19,8 +19,8 @@ router.get('/', getProjects);
 // GET /api/projects/featured - Get featured projects (Public)
 router.get('/featured', getFeaturedProjects);
 
-// GET /api/projects/:slug - Get single project by slug (Public)
-router.get('/:slug', getProjectBySlug);
+// GET /api/projects/:id - Get single project by ID (Public)
+router.get('/:id', getProjectById);
 
 // POST /api/projects - Create a new project (Admin Only, JWT protected, Image uploads)
 router.post(

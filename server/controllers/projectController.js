@@ -104,11 +104,11 @@ export const getFeaturedProjects = async (req, res) => {
   }
 };
 
-// 3. Get Project By Slug (Public)
-export const getProjectBySlug = async (req, res) => {
+// 3. Get Project By ID (Public)
+export const getProjectById = async (req, res) => {
   try {
-    const { slug } = req.params;
-    const project = await Project.findOne({ slug });
+    const { id } = req.params;
+    const project = await Project.findById(id);
 
     if (!project) {
       return res.status(404).json({

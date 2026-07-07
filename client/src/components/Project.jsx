@@ -111,7 +111,7 @@ const Project = () => {
                   {/* CTA Links */}
                   <div className="flex items-center gap-2.5 mt-auto pt-2">
                     <Link
-                      to={`/projects/${project.slug}`}
+                      to={`/projects/${project._id}`}
                       className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-gray-200 hover:border-gray-300 bg-white text-gray-600 font-semibold text-xxs transition-all duration-200 hover:bg-gray-50"
                     >
                       Details

@@ -18,7 +18,7 @@ export const projectValidationRules = [
     .notEmpty()
     .withMessage('Title is required')
     .trim(),
-    
+
   body('shortDescription')
     .notEmpty()
     .withMessage('Short description is required')
