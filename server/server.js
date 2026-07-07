@@ -34,8 +34,8 @@ app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 // Rate Limiting Config (100 requests per 15 minutes)
 const apiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
+  windowMs: 15 * 60 * 10000,
+  max: 100000,
   message: {
     message: 'Too many requests from this IP. Please try again after 15 minutes.'
   },
@@ -46,8 +46,8 @@ app.use('/api/', apiLimiter);
 
 // Basic Health Check Route
 app.get('/api/health', (req, res) => {
-  res.status(200).json({ 
-    status: 'ok', 
+  res.status(200).json({
+    status: 'ok',
     message: 'Server is running smoothly',
     timestamp: new Date()
   });
