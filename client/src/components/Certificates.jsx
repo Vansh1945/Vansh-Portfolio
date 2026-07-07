@@ -4,7 +4,7 @@ import { FiAward, FiX, FiZoomIn, FiDownload, FiInfo } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import axios from 'axios';
-import { API_URL } from '../config';
+import { API_URL, getImageUrl } from '../config';
 
 const Certificates = ({ isPreview = false }) => {
   const [certificates, setCertificates] = useState([]);
@@ -46,7 +46,7 @@ const Certificates = ({ isPreview = false }) => {
 
   const handleDownload = (imageUrl, title) => {
     const link = document.createElement('a');
-    link.href = imageUrl;
+    link.href = getImageUrl(imageUrl);
     link.target = '_blank';
     link.download = `${title.replace(/\s+/g, '_')}_Certificate`;
     document.body.appendChild(link);
@@ -169,7 +169,7 @@ const Certificates = ({ isPreview = false }) => {
                   {/* Certificate Image Frame */}
                   <div className="aspect-[4/3] bg-gray-50 relative overflow-hidden border-b border-gray-50/50">
                     <img
-                      src={cert.image}
+                      src={getImageUrl(cert.image)}
                       alt={cert.title}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
@@ -225,7 +225,7 @@ const Certificates = ({ isPreview = false }) => {
               {/* Certificate Image Frame */}
               <div className="aspect-[4/3] bg-gray-50 rounded-xl overflow-hidden border border-gray-100">
                 <img
-                  src={selectedCert.image}
+                  src={getImageUrl(selectedCert.image)}
                   alt={selectedCert.title}
                   className="w-full h-full object-contain"
                 />

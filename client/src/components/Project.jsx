@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { API_URL } from '../config';
+import { API_URL, getImageUrl } from '../config';
 import { FiExternalLink } from 'react-icons/fi';
 import { ArrowRight } from 'lucide-react';
 
@@ -78,7 +78,7 @@ const Project = () => {
                 {/* Image Container */}
                 <div className="relative overflow-hidden aspect-video bg-gray-50 border-b border-gray-55">
                   <img
-                    src={project.coverImage}
+                    src={getImageUrl(project.coverImage)}
                     alt={project.title}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />

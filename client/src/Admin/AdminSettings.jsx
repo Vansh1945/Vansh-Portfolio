@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { API_URL } from '../config';
+import { API_URL, getImageUrl } from '../config';
 import { useWebsiteSettings } from '../context/WebsiteSettingsContext';
 import {
   Settings,
@@ -455,7 +455,7 @@ const AdminSettings = () => {
                     <label className="block text-[10px] font-bold text-gray-400 uppercase">Profile Avatar Image</label>
                     {previews.profileImage && (
                       <div className="w-20 h-20 rounded-full overflow-hidden border border-gray-200 bg-white">
-                        <img src={previews.profileImage} alt="Profile preview" className="w-full h-full object-cover" />
+                        <img src={getImageUrl(previews.profileImage)} alt="Profile preview" className="w-full h-full object-cover" />
                       </div>
                     )}
                     <input
@@ -471,7 +471,7 @@ const AdminSettings = () => {
                     <label className="block text-[10px] font-bold text-gray-400 uppercase">Hero Banner/Illustration</label>
                     {previews.heroImage && (
                       <div className="aspect-[16/9] max-h-24 rounded-lg overflow-hidden border border-gray-200 bg-white flex items-center justify-center">
-                        <img src={previews.heroImage} alt="Hero banner preview" className="max-w-full max-h-full object-contain" />
+                        <img src={getImageUrl(previews.heroImage)} alt="Hero banner preview" className="max-w-full max-h-full object-contain" />
                       </div>
                     )}
                     <input
@@ -487,7 +487,7 @@ const AdminSettings = () => {
                     <label className="block text-[10px] font-bold text-gray-400 uppercase">Branding Logo</label>
                     {previews.logo && (
                       <div className="h-10 max-w-[150px] overflow-hidden border border-gray-200 bg-white p-1 rounded flex items-center justify-center">
-                        <img src={previews.logo} alt="Logo preview" className="max-h-full object-contain" />
+                        <img src={getImageUrl(previews.logo)} alt="Logo preview" className="max-h-full object-contain" />
                       </div>
                     )}
                     <input
@@ -503,7 +503,7 @@ const AdminSettings = () => {
                     <label className="block text-[10px] font-bold text-gray-400 uppercase">Tab Favicon</label>
                     {previews.favicon && (
                       <div className="w-8 h-8 rounded border border-gray-200 bg-white flex items-center justify-center p-0.5">
-                        <img src={previews.favicon} alt="Favicon preview" className="w-full h-full object-contain" />
+                        <img src={getImageUrl(previews.favicon)} alt="Favicon preview" className="w-full h-full object-contain" />
                       </div>
                     )}
                     <input

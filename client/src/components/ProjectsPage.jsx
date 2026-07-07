@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { FiGithub, FiExternalLink } from 'react-icons/fi';
-import { API_URL } from '../config';
+import { API_URL, getImageUrl } from '../config';
 
 const ProjectsPage = () => {
   const [projects, setProjects] = useState([]);
@@ -68,7 +68,7 @@ const ProjectsPage = () => {
                     {/* Cover image */}
                     <div className="relative aspect-video overflow-hidden bg-gray-50 border-b border-gray-100">
                       <img
-                        src={project.coverImage}
+                        src={getImageUrl(project.coverImage)}
                         alt={project.title}
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />

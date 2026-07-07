@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { API_URL } from '../config';
+import { API_URL, getImageUrl } from '../config';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiArrowLeft, FiGithub, FiExternalLink, FiCpu, FiCheckCircle } from 'react-icons/fi';
 import { Loader } from 'lucide-react';
@@ -88,7 +88,7 @@ const ProjectDetailsPage = () => {
           <div className="lg:col-span-2 space-y-4">
             <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden aspect-video relative shadow-sm">
               <img
-                src={activeImage}
+                src={getImageUrl(activeImage)}
                 alt={project.title}
                 className="w-full h-full object-cover transition-all duration-300"
               />
@@ -102,7 +102,7 @@ const ProjectDetailsPage = () => {
                   className={`w-20 h-14 rounded-lg overflow-hidden border-2 shrink-0 transition-all ${activeImage === project.coverImage ? 'border-primary' : 'border-transparent'
                     }`}
                 >
-                  <img src={project.coverImage} className="w-full h-full object-cover" alt="Cover Thumbnail" />
+                  <img src={getImageUrl(project.coverImage)} className="w-full h-full object-cover" alt="Cover Thumbnail" />
                 </button>
                 {project.gallery.map((imgUrl, idx) => (
                   <button
@@ -111,7 +111,7 @@ const ProjectDetailsPage = () => {
                     className={`w-20 h-14 rounded-lg overflow-hidden border-2 shrink-0 transition-all ${activeImage === imgUrl ? 'border-primary' : 'border-transparent'
                       }`}
                   >
-                    <img src={imgUrl} className="w-full h-full object-cover" alt={`Gallery Thumbnail ${idx + 1}`} />
+                    <img src={getImageUrl(imgUrl)} className="w-full h-full object-cover" alt={`Gallery Thumbnail ${idx + 1}`} />
                   </button>
                 ))}
               </div>
@@ -233,7 +233,7 @@ const ProjectDetailsPage = () => {
                   className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
                 >
                   <div className="aspect-video overflow-hidden bg-gray-50">
-                    <img src={relProj.coverImage} className="w-full h-full object-cover" alt={relProj.title} />
+                    <img src={getImageUrl(relProj.coverImage)} className="w-full h-full object-cover" alt={relProj.title} />
                   </div>
                   <div className="p-4 space-y-2">
                     <h4 className="font-bold text-gray-900 text-xs line-clamp-1">{relProj.title}</h4>

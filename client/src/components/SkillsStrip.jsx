@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { API_URL } from '../config';
+import { API_URL, getImageUrl } from '../config';
 
 const marqueeStyle = `
   @keyframes marquee {
@@ -58,7 +58,7 @@ const SkillsStrip = () => {
             >
               <div className="w-8 h-8 flex items-center justify-center shrink-0">
                 <img
-                  src={skill.logo}
+                  src={getImageUrl(skill.logo)}
                   alt={skill.name}
                   className="max-w-full max-h-full object-contain"
                   draggable="false"

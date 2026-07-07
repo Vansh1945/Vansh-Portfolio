@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { API_URL } from '../config';
+import { API_URL, getImageUrl } from '../config';
 import {
   Folder,
   Plus,
@@ -321,7 +321,7 @@ const AdminProjects = () => {
                     <tr key={proj._id} className="hover:bg-gray-50/50">
                       <td className="px-6 py-4">
                         <img
-                          src={proj.coverImage}
+                          src={getImageUrl(proj.coverImage)}
                           alt={proj.title}
                           className="w-14 h-9 rounded object-cover border border-gray-100"
                         />
@@ -657,7 +657,7 @@ const AdminProjects = () => {
             {selectedProject.coverImage && (
               <div className="w-full h-64 rounded-xl overflow-hidden border border-gray-100 bg-gray-50">
                 <img
-                  src={selectedProject.coverImage}
+                  src={getImageUrl(selectedProject.coverImage)}
                   alt={selectedProject.title}
                   className="w-full h-full object-cover"
                 />

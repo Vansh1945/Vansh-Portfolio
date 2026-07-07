@@ -4,7 +4,7 @@ import { FiMenu, FiX } from "react-icons/fi";
 import { Link } from 'react-router-dom';
 import { useWebsiteSettings } from '../context/WebsiteSettingsContext';
 import axios from 'axios';
-import { API_URL } from '../config';
+import { API_URL, getImageUrl } from '../config';
 
 const navLinks = [
     { label: 'Home', href: '/#home' },
@@ -87,7 +87,7 @@ const Navbar = () => {
                 <div className="flex items-center">
                     <Link to="/" className="text-xl font-bold text-gray-900 tracking-tight font-cursive flex items-center">
                         {settings?.logo ? (
-                            <img src={settings.logo} className="h-7 w-auto object-contain" alt={settings.websiteName} />
+                            <img src={getImageUrl(settings.logo)} className="h-7 w-auto object-contain" alt={settings.websiteName} />
                         ) : (
                             <>{settings?.websiteName || 'Vansh'}<span className="text-primary">.</span></>
                         )}

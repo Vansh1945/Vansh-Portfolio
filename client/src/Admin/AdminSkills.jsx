@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { API_URL } from '../config';
+import { API_URL, getImageUrl } from '../config';
 import {
   Wrench,
   Plus,
@@ -215,7 +215,7 @@ const AdminSkills = () => {
               >
                 <div className="w-12 h-12 flex items-center justify-center bg-gray-50 rounded-xl p-2 border border-gray-100 mb-3">
                   <img
-                    src={skill.logo}
+                    src={getImageUrl(skill.logo)}
                     alt={skill.name}
                     className="max-w-full max-h-full object-contain"
                   />
@@ -288,7 +288,7 @@ const AdminSkills = () => {
                   <div className="mt-3 flex items-center gap-3 p-2 border border-gray-100 rounded-lg bg-gray-50 max-w-max">
                     <span className="text-[10px] text-gray-400 font-bold">Preview:</span>
                     <div className="w-8 h-8 flex items-center justify-center p-1 bg-white border rounded">
-                      <img src={logoPreview} alt="Preview" className="max-w-full max-h-full object-contain" />
+                      <img src={getImageUrl(logoPreview)} alt="Preview" className="max-w-full max-h-full object-contain" />
                     </div>
                   </div>
                 )}

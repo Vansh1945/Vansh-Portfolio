@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { FaStar, FaQuoteLeft } from 'react-icons/fa';
 import { Loader } from 'lucide-react';
 import axios from 'axios';
-import { API_URL } from '../config';
+import { API_URL, getImageUrl } from '../config';
 
 const Testimonials = () => {
   const [testimonials, setTestimonials] = useState([]);
@@ -111,7 +111,7 @@ const Testimonials = () => {
                   <div className="w-10 h-10 rounded-full overflow-hidden bg-primary/10 flex items-center justify-center shrink-0">
                     {testimonial.clientImage ? (
                       <img
-                        src={testimonial.clientImage}
+                        src={getImageUrl(testimonial.clientImage)}
                         alt={testimonial.clientName}
                         className="w-full h-full object-cover"
                       />

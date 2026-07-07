@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { API_URL } from '../config';
+import { API_URL, getImageUrl } from '../config';
 import {
   Award,
   Trash2,
@@ -348,7 +348,7 @@ const AdminCertificates = () => {
                         />
                         {imagePreview ? (
                           <img
-                            src={imagePreview}
+                            src={getImageUrl(imagePreview)}
                             alt="Preview"
                             className="max-h-[150px] rounded-lg object-contain"
                           />
@@ -415,7 +415,7 @@ const AdminCertificates = () => {
               >
                 <div className="w-24 h-24 rounded-lg bg-gray-50 overflow-hidden shrink-0 border border-gray-100 flex items-center justify-center">
                   <img
-                    src={cert.image}
+                    src={getImageUrl(cert.image)}
                     alt={cert.title}
                     className="w-full h-full object-cover"
                   />
@@ -499,9 +499,9 @@ const AdminCertificates = () => {
             {selectedCert.image && (
               <div className="w-full h-48 rounded-xl overflow-hidden border border-gray-100 bg-gray-50 flex items-center justify-center">
                 <img
-                  src={selectedCert.image}
+                  src={getImageUrl(selectedCert.image)}
                   alt={selectedCert.title}
-                  className="max-w-full max-h-full object-contain"
+                  className="w-full h-full object-contain"
                 />
               </div>
             )}

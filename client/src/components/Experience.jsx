@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import axios from 'axios';
-import { API_URL } from '../config';
+import { API_URL, getImageUrl } from '../config';
 import SkillsStrip from './SkillsStrip';
 
 const Experience = () => {
@@ -85,7 +85,7 @@ const Experience = () => {
                         <div className="flex items-center gap-3">
                           {exp.companyLogo && (
                             <img
-                              src={exp.companyLogo}
+                              src={getImageUrl(exp.companyLogo)}
                               alt={exp.organization}
                               className="w-10 h-10 rounded-lg object-cover border border-gray-100"
                             />
