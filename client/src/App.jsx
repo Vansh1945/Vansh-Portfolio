@@ -24,16 +24,16 @@ import AdminSettings from './Admin/AdminSettings';
 import AdminMessages from './Admin/AdminMessages';
 import AdminSkills from './Admin/AdminSkills';
 import ProtectedRoute from './components/ProtectedRoute';
-import { 
-  LogOut, 
-  Award, 
-  Wrench, 
+import {
+  LogOut,
+  Award,
+  Wrench,
   LayoutDashboard,
   MessageSquare,
   Star,
   Settings,
   Menu,
-  X 
+  X
 } from 'lucide-react';
 
 // Scroll helper supporting both route changes and hash navigation
@@ -83,14 +83,14 @@ const AdminLayout = ({ children }) => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row text-left font-sans">
-      
+    <div className="h-screen bg-gray-50 flex flex-col md:flex-row overflow-hidden text-left font-sans">
+
       {/* Mobile Header Bar */}
       <div className="md:hidden bg-slate-900 text-white px-6 py-4 flex justify-between items-center z-50 shadow-md">
         <Link to="/admin/dashboard" className="text-lg font-bold tracking-tight">
           Vansh<span className="text-blue-500">.</span>Admin
         </Link>
-        <button 
+        <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
           className="p-1 hover:bg-slate-800 rounded transition-colors"
           aria-label="Toggle sidebar"
@@ -100,9 +100,8 @@ const AdminLayout = ({ children }) => {
       </div>
 
       {/* Sidebar Navigation */}
-      <aside className={`fixed md:sticky top-0 left-0 bottom-0 z-40 w-64 bg-slate-900 text-slate-300 flex flex-col justify-between border-r border-slate-800 transition-transform duration-300 md:translate-x-0 ${
-        isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-      } h-screen shrink-0`}>
+      <aside className={`fixed md:sticky top-0 left-0 bottom-0 z-40 w-64 bg-slate-900 text-slate-300 flex flex-col justify-between border-r border-slate-800 transition-transform duration-300 md:translate-x-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        } h-screen shrink-0`}>
         <div>
           {/* Sidebar Header Branding */}
           <div className="px-6 py-6 border-b border-slate-800">
@@ -124,11 +123,10 @@ const AdminLayout = ({ children }) => {
                     setIsSidebarOpen(false);
                     navigate(item.path);
                   }}
-                  className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-semibold transition-all ${
-                    isActive 
-                      ? 'bg-blue-600 text-white shadow-sm' 
+                  className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-semibold transition-all ${isActive
+                      ? 'bg-blue-600 text-white shadow-sm'
                       : 'hover:bg-slate-800 hover:text-white text-slate-400'
-                  }`}
+                    }`}
                 >
                   <Icon className="w-4 h-4 shrink-0" />
                   {item.label}
@@ -161,7 +159,7 @@ const AdminLayout = ({ children }) => {
 
       {/* Backdrop overlay for mobile sidebar */}
       {isSidebarOpen && (
-        <div 
+        <div
           onClick={() => setIsSidebarOpen(false)}
           className="fixed inset-0 bg-black/45 z-30 md:hidden"
         />

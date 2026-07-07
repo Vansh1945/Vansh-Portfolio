@@ -14,6 +14,7 @@ import {
   Eye,
   ExternalLink
 } from 'lucide-react';
+import Pagination from './Pagination';
 
 const AdminProjects = () => {
   const navigate = useNavigate();
@@ -374,28 +375,11 @@ const AdminProjects = () => {
               </table>
             </div>
 
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="flex justify-between items-center px-6 py-4 bg-gray-50 border-t border-gray-100">
-                <span className="text-[10px] text-gray-400 font-bold">Page {page} of {totalPages}</span>
-                <div className="flex gap-2">
-                  <button
-                    disabled={page === 1}
-                    onClick={() => setPage(p => p - 1)}
-                    className="px-2.5 py-1 border border-gray-200 hover:bg-white rounded text-xxs font-bold text-gray-500 transition-colors disabled:opacity-50"
-                  >
-                    Prev
-                  </button>
-                  <button
-                    disabled={page === totalPages}
-                    onClick={() => setPage(p => p + 1)}
-                    className="px-2.5 py-1 border border-gray-200 hover:bg-white rounded text-xxs font-bold text-gray-500 transition-colors disabled:opacity-50"
-                  >
-                    Next
-                  </button>
-                </div>
-              </div>
-            )}
+            <Pagination
+              currentPage={page}
+              totalPages={totalPages}
+              onPageChange={(p) => setPage(p)}
+            />
           </div>
         )}
 

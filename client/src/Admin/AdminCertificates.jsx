@@ -14,6 +14,7 @@ import {
   Loader,
   Eye
 } from 'lucide-react';
+import Pagination from './Pagination';
 
 const AdminCertificates = () => {
   const navigate = useNavigate();
@@ -22,6 +23,8 @@ const AdminCertificates = () => {
   const [submitLoading, setSubmitLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
 
   // Form State
   const [showAddForm, setShowAddForm] = useState(false);
@@ -407,12 +410,13 @@ const AdminCertificates = () => {
             <p className="text-xs font-semibold text-gray-400">No certificates found. Add your first certificate above.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
-            {certificates.map((cert) => (
-              <div
-                key={cert._id || cert.id}
-                className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm flex gap-4 hover:shadow-md hover:border-gray-200 transition-all"
-              >
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+              {certificates.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((cert) => (
+                <div
+                  key={cert._id || cert.id}
+                  className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm flex gap-4 hover:shadow-md hover:border-gray-200 transition-all"
+                >
                 <div className="w-24 h-24 rounded-lg bg-gray-50 overflow-hidden shrink-0 border border-gray-100 flex items-center justify-center">
                   <img
                     src={getImageUrl(cert.image)}
@@ -470,6 +474,15 @@ const AdminCertificates = () => {
               </div>
             ))}
           </div>
+
+          <Pagination
+            currentPage={currentPage}
+            totalPages={Math.ceil(certificates.length / itemsPerPage)}
+            onPageChange={(page) => setCurrentPage(page)}
+            totalItems={certificates.length}
+            itemsPerPage={itemsPerPage}
+          />
+        </>
         )}
 
       </div>

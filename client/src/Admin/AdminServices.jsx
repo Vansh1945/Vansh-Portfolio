@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { ServiceIcon } from '../components/ServiceIcon';
 import { API_URL } from '../config';
+import Pagination from './Pagination';
 
 const AdminServices = () => {
   const navigate = useNavigate();
@@ -21,6 +22,8 @@ const AdminServices = () => {
   const [submitLoading, setSubmitLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
 
   // Modal State
   const [showModal, setShowModal] = useState(false);
@@ -227,7 +230,7 @@ const AdminServices = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
-                  {services.map((service) => {
+                  {services.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((service) => {
                     return (
                       <tr key={service._id} className="hover:bg-gray-50/50">
                         <td className="px-6 py-4">
@@ -273,6 +276,14 @@ const AdminServices = () => {
                 </tbody>
               </table>
             </div>
+
+            <Pagination
+              currentPage={currentPage}
+              totalPages={Math.ceil(services.length / itemsPerPage)}
+              onPageChange={(page) => setCurrentPage(page)}
+              totalItems={services.length}
+              itemsPerPage={itemsPerPage}
+            />
           </div>
         )}
       </div>

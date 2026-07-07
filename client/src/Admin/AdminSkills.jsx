@@ -11,6 +11,7 @@ import {
   X,
   Loader
 } from 'lucide-react';
+import Pagination from './Pagination';
 
 const AdminSkills = () => {
   const navigate = useNavigate();
@@ -19,6 +20,8 @@ const AdminSkills = () => {
   const [submitLoading, setSubmitLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 12;
 
   // Modal controls
   const [showModal, setShowModal] = useState(false);
@@ -207,41 +210,51 @@ const AdminSkills = () => {
             <p className="text-xs font-semibold text-gray-400">No skills registered yet. Add one to show on your website!</p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-            {skills.map((skill) => (
-              <div
-                key={skill._id}
-                className="bg-white border border-gray-150 rounded-2xl p-5 shadow-sm flex flex-col items-center justify-between group relative hover:border-blue-500/20 hover:shadow transition-all duration-200"
-              >
-                <div className="w-12 h-12 flex items-center justify-center bg-gray-50 rounded-xl p-2 border border-gray-100 mb-3">
-                  <img
-                    src={getImageUrl(skill.logo)}
-                    alt={skill.name}
-                    className="max-w-full max-h-full object-contain"
-                  />
-                </div>
-                <h4 className="text-xs font-bold text-gray-800 tracking-wide text-center truncate w-full">{skill.name}</h4>
+          <>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+              {skills.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((skill) => (
+                <div
+                  key={skill._id}
+                  className="bg-white border border-gray-150 rounded-2xl p-5 shadow-sm flex flex-col items-center justify-between group relative hover:border-blue-500/20 hover:shadow transition-all duration-200"
+                >
+                  <div className="w-12 h-12 flex items-center justify-center bg-gray-50 rounded-xl p-2 border border-gray-100 mb-3">
+                    <img
+                      src={getImageUrl(skill.logo)}
+                      alt={skill.name}
+                      className="max-w-full max-h-full object-contain"
+                    />
+                  </div>
+                  <h4 className="text-xs font-bold text-gray-800 tracking-wide text-center truncate w-full">{skill.name}</h4>
 
-                {/* Edit / Delete Hover overlays */}
-                <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button
-                    onClick={() => openEditModal(skill)}
-                    className="p-1 bg-gray-100 hover:bg-gray-200 rounded text-gray-600 transition-colors"
-                    title="Edit"
-                  >
-                    <Edit className="w-3.5 h-3.5" />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(skill._id)}
-                    className="p-1 bg-red-50 hover:bg-red-100 rounded text-red-500 transition-colors"
-                    title="Delete"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
+                  {/* Edit / Delete Hover overlays */}
+                  <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button
+                      onClick={() => openEditModal(skill)}
+                      className="p-1 bg-gray-100 hover:bg-gray-200 rounded text-gray-600 transition-colors"
+                      title="Edit"
+                    >
+                      <Edit className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(skill._id)}
+                      className="p-1 bg-red-50 hover:bg-red-100 rounded text-red-500 transition-colors"
+                      title="Delete"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+
+            <Pagination
+              currentPage={currentPage}
+              totalPages={Math.ceil(skills.length / itemsPerPage)}
+              onPageChange={(page) => setCurrentPage(page)}
+              totalItems={skills.length}
+              itemsPerPage={itemsPerPage}
+            />
+          </>
         )}
 
       </div>

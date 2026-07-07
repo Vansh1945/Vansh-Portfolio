@@ -12,6 +12,7 @@ import {
   Plus,
   X
 } from 'lucide-react';
+import Pagination from './Pagination';
 
 const AdminTestimonials = () => {
   const navigate = useNavigate();
@@ -19,6 +20,8 @@ const AdminTestimonials = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
 
   // Creation Modal States
   const [showModal, setShowModal] = useState(false);
@@ -214,62 +217,72 @@ const AdminTestimonials = () => {
             <p className="text-xs font-semibold text-gray-400">No testimonials found.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
-            {testimonials.map((test) => (
-              <div
-                key={test._id}
-                className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex flex-col justify-between hover:shadow-md transition-all relative"
-              >
-                {/* Status Badge */}
-                <span className={`absolute top-6 right-6 text-[9px] font-bold px-2 py-0.5 rounded-full uppercase ${test.approved
-                  ? 'bg-green-100 text-green-700'
-                  : 'bg-amber-100 text-amber-700'
-                  }`}>
-                  {test.approved ? 'Approved' : 'Pending'}
-                </span>
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+              {testimonials.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((test) => (
+                <div
+                  key={test._id}
+                  className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex flex-col justify-between hover:shadow-md transition-all relative"
+                >
+                  {/* Status Badge */}
+                  <span className={`absolute top-6 right-6 text-[9px] font-bold px-2 py-0.5 rounded-full uppercase ${test.approved
+                    ? 'bg-green-100 text-green-700'
+                    : 'bg-amber-100 text-amber-700'
+                    }`}>
+                    {test.approved ? 'Approved' : 'Pending'}
+                  </span>
 
-                <div>
-                  <div className="flex gap-1 mb-3">
-                    {[...Array(test.rating)].map((_, i) => (
-                      <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                    ))}
+                  <div>
+                    <div className="flex gap-1 mb-3">
+                      {[...Array(test.rating)].map((_, i) => (
+                        <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                      ))}
+                    </div>
+
+                    <p className="text-xs text-gray-500 italic leading-relaxed mb-6">"{test.message}"</p>
                   </div>
 
-                  <p className="text-xs text-gray-500 italic leading-relaxed mb-6">"{test.message}"</p>
-                </div>
+                  <div className="flex items-center justify-between border-t border-gray-100/60 pt-4 mt-auto">
+                    <div className="flex items-center gap-2.5">
+                      <img
+                        src={test.clientImage || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&h=120&q=80'}
+                        alt={test.clientName}
+                        className="w-8 h-8 rounded-full border border-gray-100 object-cover"
+                      />
+                      <h4 className="text-xs font-bold text-gray-900">{test.clientName}</h4>
+                    </div>
 
-                <div className="flex items-center justify-between border-t border-gray-100/60 pt-4 mt-auto">
-                  <div className="flex items-center gap-2.5">
-                    <img
-                      src={test.clientImage || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&h=120&q=80'}
-                      alt={test.clientName}
-                      className="w-8 h-8 rounded-full border border-gray-100 object-cover"
-                    />
-                    <h4 className="text-xs font-bold text-gray-900">{test.clientName}</h4>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    {!test.approved && (
+                    <div className="flex items-center gap-2">
+                      {!test.approved && (
+                        <button
+                          onClick={() => handleApprove(test._id)}
+                          className="bg-green-500 hover:bg-green-600 text-white p-1.5 rounded-lg shadow-sm transition-colors flex items-center justify-center"
+                          title="Approve Review"
+                        >
+                          <Check className="w-3.5 h-3.5" />
+                        </button>
+                      )}
                       <button
-                        onClick={() => handleApprove(test._id)}
-                        className="bg-green-500 hover:bg-green-600 text-white p-1.5 rounded-lg shadow-sm transition-colors flex items-center justify-center"
-                        title="Approve Review"
+                        onClick={() => handleDelete(test._id)}
+                        className="bg-red-50 hover:bg-red-100 text-red-600 p-1.5 rounded-lg transition-colors flex items-center justify-center"
+                        title="Reject/Delete Review"
                       >
-                        <Check className="w-3.5 h-3.5" />
+                        <Trash2 className="w-3.5 h-3.5" />
                       </button>
-                    )}
-                    <button
-                      onClick={() => handleDelete(test._id)}
-                      className="bg-red-50 hover:bg-red-100 text-red-600 p-1.5 rounded-lg transition-colors flex items-center justify-center"
-                      title="Reject/Delete Review"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+
+            <Pagination
+              currentPage={currentPage}
+              totalPages={Math.ceil(testimonials.length / itemsPerPage)}
+              onPageChange={(page) => setCurrentPage(page)}
+              totalItems={testimonials.length}
+              itemsPerPage={itemsPerPage}
+            />
+          </>
         )}
 
       </div>
