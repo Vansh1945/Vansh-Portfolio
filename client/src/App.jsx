@@ -23,6 +23,7 @@ import AdminProjects from './Admin/AdminProjects';
 import AdminSettings from './Admin/AdminSettings';
 import AdminMessages from './Admin/AdminMessages';
 import AdminSkills from './Admin/AdminSkills';
+import AdminExperience from './Admin/AdminExperience';
 import ProtectedRoute from './components/ProtectedRoute';
 import {
   LogOut,
@@ -33,7 +34,8 @@ import {
   Star,
   Settings,
   Menu,
-  X
+  X,
+  Briefcase
 } from 'lucide-react';
 
 // Scroll helper supporting both route changes and hash navigation
@@ -75,6 +77,7 @@ const AdminLayout = ({ children }) => {
     { label: 'Dashboard', icon: LayoutDashboard, path: '/admin/dashboard' },
     { label: 'Manage Projects', icon: Wrench, path: '/admin/projects' },
     { label: 'Manage Skills', icon: Wrench, path: '/admin/skills' },
+    { label: 'Manage Experience', icon: Briefcase, path: '/admin/experience' },
     { label: 'Services (Admin)', icon: Wrench, path: '/admin/services' },
     { label: 'Certificates', icon: Award, path: '/admin/certificates' },
     { label: 'Testimonials', icon: Star, path: '/admin/testimonials' },
@@ -262,6 +265,13 @@ const App = () => {
           <ProtectedRoute>
             <AdminLayout>
               <AdminSkills />
+            </AdminLayout>
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/experience" element={
+          <ProtectedRoute>
+            <AdminLayout>
+              <AdminExperience />
             </AdminLayout>
           </ProtectedRoute>
         } />

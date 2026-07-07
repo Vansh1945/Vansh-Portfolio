@@ -27,10 +27,6 @@ export const createExperience = async (req, res) => {
       location, 
       summary, 
       responsibilities, 
-      achievements, 
-      technologies, 
-      liveProjectUrl, 
-      githubUrl, 
       displayOrder, 
       featured, 
       status 
@@ -52,11 +48,7 @@ export const createExperience = async (req, res) => {
       location,
       summary,
       responsibilities: parseArrayField(responsibilities),
-      achievements: parseArrayField(achievements),
-      technologies: parseArrayField(technologies),
       companyLogo,
-      liveProjectUrl,
-      githubUrl,
       displayOrder: displayOrder || 0,
       featured: featured === 'true' || featured === true,
       status: status || 'active'
@@ -93,12 +85,6 @@ export const updateExperience = async (req, res) => {
     // Format array fields
     if (updateData.responsibilities !== undefined) {
       updateData.responsibilities = parseArrayField(updateData.responsibilities);
-    }
-    if (updateData.achievements !== undefined) {
-      updateData.achievements = parseArrayField(updateData.achievements);
-    }
-    if (updateData.technologies !== undefined) {
-      updateData.technologies = parseArrayField(updateData.technologies);
     }
 
     // Format boolean conversions

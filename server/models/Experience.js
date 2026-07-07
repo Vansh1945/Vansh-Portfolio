@@ -39,23 +39,7 @@ const experienceSchema = new mongoose.Schema({
     type: String,
     trim: true,
   }],
-  achievements: [{
-    type: String,
-    trim: true,
-  }],
-  technologies: [{
-    type: String,
-    trim: true,
-  }],
   companyLogo: {
-    type: String,
-    trim: true,
-  },
-  liveProjectUrl: {
-    type: String,
-    trim: true,
-  },
-  githubUrl: {
     type: String,
     trim: true,
   },

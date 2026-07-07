@@ -144,6 +144,12 @@ const AdminDashboard = () => {
               Manage Skills
             </button>
             <button
+              onClick={() => navigate('/admin/experience')}
+              className="w-full py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold text-xs rounded-lg transition-colors text-center"
+            >
+              Manage Experience
+            </button>
+            <button
               onClick={() => navigate('/admin/settings')}
               className="w-full py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold text-xs rounded-lg transition-colors text-center"
             >
