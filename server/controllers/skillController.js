@@ -1,6 +1,5 @@
 import Skill from '../models/Skill.js';
-import fs from 'fs';
-import path from 'path';
+import { uploadToCloudinary, deleteFromCloudinary, getPublicIdFromUrl } from '../config/cloudinaryConfig.js';
 
 // 1. Create Skill (Admin only)
 export const createSkill = async (req, res) => {
@@ -13,7 +12,8 @@ export const createSkill = async (req, res) => {
 
     let logo = '';
     if (req.file) {
-      logo = `${req.protocol}://${req.get('host')}/uploads/skills/${req.file.filename}`;
+      const result = await uploadToCloudinary(req.file.buffer, 'portfolio/skills');
+      logo = result.secure_url;
     } else {
       return res.status(400).json({ success: false, message: 'Skill logo is required' });
     }
@@ -31,9 +31,6 @@ export const createSkill = async (req, res) => {
       data: newSkill
     });
   } catch (error) {
-    if (req.file) {
-      fs.unlinkSync(req.file.path);
-    }
     res.status(500).json({
       success: false,
       message: 'Failed to create skill.',
@@ -76,15 +73,14 @@ export const updateSkill = async (req, res) => {
     if (name) updateData.name = name;
 
     if (req.file) {
-      // Delete old logo
-      if (skill.logo && skill.logo.includes('/uploads/skills/')) {
-        const oldFilename = skill.logo.split('/uploads/skills/')[1];
-        const oldFilePath = path.join(process.cwd(), 'uploads', 'skills', oldFilename);
-        if (fs.existsSync(oldFilePath)) {
-          fs.unlinkSync(oldFilePath);
-        }
+      // Delete old logo from Cloudinary
+      const oldPublicId = getPublicIdFromUrl(skill.logo);
+      if (oldPublicId) {
+        await deleteFromCloudinary(oldPublicId);
       }
-      updateData.logo = `${req.protocol}://${req.get('host')}/uploads/skills/${req.file.filename}`;
+      // Upload new logo
+      const result = await uploadToCloudinary(req.file.buffer, 'portfolio/skills');
+      updateData.logo = result.secure_url;
     }
 
     const updatedSkill = await Skill.findByIdAndUpdate(id, updateData, {
@@ -98,9 +94,6 @@ export const updateSkill = async (req, res) => {
       data: updatedSkill
     });
   } catch (error) {
-    if (req.file) {
-      fs.unlinkSync(req.file.path);
-    }
     res.status(500).json({
       success: false,
       message: 'Failed to update skill.',
@@ -119,13 +112,10 @@ export const deleteSkill = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Skill not found.' });
     }
 
-    // Delete logo from disk
-    if (skill.logo && skill.logo.includes('/uploads/skills/')) {
-      const filename = skill.logo.split('/uploads/skills/')[1];
-      const filePath = path.join(process.cwd(), 'uploads', 'skills', filename);
-      if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
-      }
+    // Delete logo from Cloudinary
+    const publicId = getPublicIdFromUrl(skill.logo);
+    if (publicId) {
+      await deleteFromCloudinary(publicId);
     }
 
     await Skill.findByIdAndDelete(id);

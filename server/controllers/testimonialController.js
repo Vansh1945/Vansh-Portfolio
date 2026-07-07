@@ -1,4 +1,5 @@
 import Testimonial from '../models/Testimonial.js';
+import { uploadToCloudinary, deleteFromCloudinary, getPublicIdFromUrl } from '../config/cloudinaryConfig.js';
 
 // 1. Submit testimonial (Public)
 export const createTestimonial = async (req, res) => {
@@ -11,8 +12,8 @@ export const createTestimonial = async (req, res) => {
 
     let clientImageUrl = undefined;
     if (req.file) {
-      const host = `${req.protocol}://${req.get('host')}`;
-      clientImageUrl = `${host}/uploads/testimonials/${req.file.filename}`;
+      const result = await uploadToCloudinary(req.file.buffer, 'portfolio/testimonials');
+      clientImageUrl = result.secure_url;
     }
 
     const testimonial = new Testimonial({
@@ -104,11 +105,21 @@ export const approveTestimonial = async (req, res) => {
 export const deleteTestimonial = async (req, res) => {
   try {
     const { id } = req.params;
-    const testimonial = await Testimonial.findByIdAndDelete(id);
+    const testimonial = await Testimonial.findById(id);
 
     if (!testimonial) {
       return res.status(404).json({ success: false, message: 'Testimonial not found' });
     }
+
+    // Delete client image from Cloudinary if exists
+    if (testimonial.clientImage) {
+      const publicId = getPublicIdFromUrl(testimonial.clientImage);
+      if (publicId) {
+        await deleteFromCloudinary(publicId);
+      }
+    }
+
+    await Testimonial.findByIdAndDelete(id);
 
     res.status(200).json({
       success: true,

@@ -4,7 +4,6 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
-import path from 'path';
 import projectRoutes from './routes/projectRoutes.js';
 import contactRoutes from './routes/contactRoutes.js';
 import authRoutes from './routes/authRoutes.js';
@@ -23,14 +22,9 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Security Middlewares
-app.use(helmet({
-  crossOriginResourcePolicy: false // Allow loading local images in frontend
-}));
+app.use(helmet());
 app.use(cors());
 app.use(express.json());
-
-// Static uploads serving
-app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 // Rate Limiting Config (100 requests per 15 minutes)
 const apiLimiter = rateLimit({

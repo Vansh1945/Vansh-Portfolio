@@ -1,56 +1,9 @@
 import multer from 'multer';
 import path from 'path';
-import fs from 'fs';
 
-const UPLOAD_DIR = './uploads';
-const PROJECTS_DIR = './uploads/projects';
-const EXPERIENCE_DIR = './uploads/experience';
-const TESTIMONIALS_DIR = './uploads/testimonials';
-const SKILLS_DIR = './uploads/skills';
-const CERTIFICATES_DIR = './uploads/certificates';
-
-// Ensure upload directories exist
-if (!fs.existsSync(UPLOAD_DIR)) {
-  fs.mkdirSync(UPLOAD_DIR, { recursive: true });
-}
-if (!fs.existsSync(PROJECTS_DIR)) {
-  fs.mkdirSync(PROJECTS_DIR, { recursive: true });
-}
-if (!fs.existsSync(EXPERIENCE_DIR)) {
-  fs.mkdirSync(EXPERIENCE_DIR, { recursive: true });
-}
-if (!fs.existsSync(TESTIMONIALS_DIR)) {
-  fs.mkdirSync(TESTIMONIALS_DIR, { recursive: true });
-}
-if (!fs.existsSync(SKILLS_DIR)) {
-  fs.mkdirSync(SKILLS_DIR, { recursive: true });
-}
-if (!fs.existsSync(CERTIFICATES_DIR)) {
-  fs.mkdirSync(CERTIFICATES_DIR, { recursive: true });
-}
-
-// Storage configurations
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    if (file.fieldname === 'coverImage' || file.fieldname === 'galleryImages') {
-      cb(null, PROJECTS_DIR);
-    } else if (file.fieldname === 'companyLogo') {
-      cb(null, EXPERIENCE_DIR);
-    } else if (file.fieldname === 'clientImage') {
-      cb(null, TESTIMONIALS_DIR);
-    } else if (file.fieldname === 'logo') {
-      cb(null, SKILLS_DIR);
-    } else if (file.fieldname === 'image') {
-      cb(null, CERTIFICATES_DIR);
-    } else {
-      cb(null, UPLOAD_DIR);
-    }
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
-  }
-});
+// Use memory storage — files are held as buffers (req.file.buffer)
+// and uploaded to Cloudinary in the controller
+const storage = multer.memoryStorage();
 
 // File filter (jpg, jpeg, png, webp)
 const fileFilter = (req, file, cb) => {
@@ -66,11 +19,11 @@ const fileFilter = (req, file, cb) => {
 
 // Multer upload configurations
 const upload = multer({
-  storage: storage,
+  storage,
   limits: {
     fileSize: 5 * 1024 * 1024 // 5MB limit
   },
-  fileFilter: fileFilter
+  fileFilter
 });
 
 // Helper fields config for project creation: 1 coverImage, and multiple galleryImages

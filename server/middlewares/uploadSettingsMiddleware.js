@@ -1,31 +1,8 @@
 import multer from 'multer';
 import path from 'path';
-import fs from 'fs';
 
-// Ensure folders exist
-const settingsDir = './uploads/settings';
-const resumeDir = './uploads/resume';
-
-if (!fs.existsSync(settingsDir)) {
-  fs.mkdirSync(settingsDir, { recursive: true });
-}
-if (!fs.existsSync(resumeDir)) {
-  fs.mkdirSync(resumeDir, { recursive: true });
-}
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    if (file.fieldname === 'resumePdf') {
-      cb(null, resumeDir);
-    } else {
-      cb(null, settingsDir);
-    }
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, `${file.fieldname}-${uniqueSuffix}${path.extname(file.originalname)}`);
-  }
-});
+// Use memory storage — files are held as buffers for Cloudinary upload
+const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
   const filetypes = /jpeg|jpg|png|webp|svg|pdf/;

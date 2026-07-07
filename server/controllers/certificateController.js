@@ -1,6 +1,5 @@
 import Certificate from '../models/Certificate.js';
-import fs from 'fs';
-import path from 'path';
+import { uploadToCloudinary, deleteFromCloudinary, getPublicIdFromUrl } from '../config/cloudinaryConfig.js';
 
 // Default certificates to seed if the database is empty
 const defaultCertificates = [
@@ -65,7 +64,8 @@ export const createCertificate = async (req, res) => {
 
     let image = req.body.image;
     if (req.file) {
-      image = `${req.protocol}://${req.get('host')}/uploads/certificates/${req.file.filename}`;
+      const result = await uploadToCloudinary(req.file.buffer, 'portfolio/certificates');
+      image = result.secure_url;
     }
 
     if (!title || !issuer || !date || !image) {
@@ -109,13 +109,10 @@ export const deleteCertificate = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Certificate not found' });
     }
 
-    // Delete image from disk
-    if (certificate.image && certificate.image.includes('/uploads/certificates/')) {
-      const filename = certificate.image.split('/uploads/certificates/')[1];
-      const filePath = path.join(process.cwd(), 'uploads', 'certificates', filename);
-      if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
-      }
+    // Delete image from Cloudinary
+    const publicId = getPublicIdFromUrl(certificate.image);
+    if (publicId) {
+      await deleteFromCloudinary(publicId);
     }
 
     await Certificate.findByIdAndDelete(id);
@@ -155,15 +152,14 @@ export const updateCertificate = async (req, res) => {
     }
 
     if (req.file) {
-      // Delete old image from disk
-      if (certificate.image && certificate.image.includes('/uploads/certificates/')) {
-        const oldFilename = certificate.image.split('/uploads/certificates/')[1];
-        const oldFilePath = path.join(process.cwd(), 'uploads', 'certificates', oldFilename);
-        if (fs.existsSync(oldFilePath)) {
-          fs.unlinkSync(oldFilePath);
-        }
+      // Delete old image from Cloudinary
+      const oldPublicId = getPublicIdFromUrl(certificate.image);
+      if (oldPublicId) {
+        await deleteFromCloudinary(oldPublicId);
       }
-      updateFields.image = `${req.protocol}://${req.get('host')}/uploads/certificates/${req.file.filename}`;
+      // Upload new image
+      const result = await uploadToCloudinary(req.file.buffer, 'portfolio/certificates');
+      updateFields.image = result.secure_url;
     } else if (req.body.image) {
       updateFields.image = req.body.image;
     }

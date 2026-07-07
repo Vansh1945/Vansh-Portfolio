@@ -1,6 +1,5 @@
 import Experience from '../models/Experience.js';
-import fs from 'fs';
-import path from 'path';
+import { uploadToCloudinary, deleteFromCloudinary, getPublicIdFromUrl } from '../config/cloudinaryConfig.js';
 
 // Helper to parse array fields from body (string/comma-separated or json array)
 const parseArrayField = (field) => {
@@ -39,7 +38,8 @@ export const createExperience = async (req, res) => {
 
     let companyLogo = '';
     if (req.file) {
-      companyLogo = `${req.protocol}://${req.get('host')}/uploads/experience/${req.file.filename}`;
+      const result = await uploadToCloudinary(req.file.buffer, 'portfolio/experience');
+      companyLogo = result.secure_url;
     }
 
     const newExperience = new Experience({
@@ -114,15 +114,14 @@ export const updateExperience = async (req, res) => {
 
     // Handle logo image update
     if (req.file) {
-      // Delete old local logo if exists and stored locally
-      if (experience.companyLogo && experience.companyLogo.includes('/uploads/experience/')) {
-        const oldFilename = experience.companyLogo.split('/uploads/experience/')[1];
-        const oldFilePath = path.join(process.cwd(), 'uploads', 'experience', oldFilename);
-        if (fs.existsSync(oldFilePath)) {
-          fs.unlinkSync(oldFilePath);
-        }
+      // Delete old logo from Cloudinary
+      const oldPublicId = getPublicIdFromUrl(experience.companyLogo);
+      if (oldPublicId) {
+        await deleteFromCloudinary(oldPublicId);
       }
-      updateData.companyLogo = `${req.protocol}://${req.get('host')}/uploads/experience/${req.file.filename}`;
+      // Upload new logo
+      const result = await uploadToCloudinary(req.file.buffer, 'portfolio/experience');
+      updateData.companyLogo = result.secure_url;
     }
 
     const updatedExperience = await Experience.findByIdAndUpdate(id, updateData, {
@@ -154,13 +153,10 @@ export const deleteExperience = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Experience record not found.' });
     }
 
-    // Delete logo image from local directory
-    if (experience.companyLogo && experience.companyLogo.includes('/uploads/experience/')) {
-      const filename = experience.companyLogo.split('/uploads/experience/')[1];
-      const filePath = path.join(process.cwd(), 'uploads', 'experience', filename);
-      if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
-      }
+    // Delete logo from Cloudinary
+    const publicId = getPublicIdFromUrl(experience.companyLogo);
+    if (publicId) {
+      await deleteFromCloudinary(publicId);
     }
 
     await Experience.findByIdAndDelete(id);

@@ -1,17 +1,5 @@
 import WebsiteSettings from '../models/WebsiteSettings.js';
-import fs from 'fs';
-import path from 'path';
-
-// Clean helper to delete old local files
-const deleteLocalFile = (relativePath) => {
-  if (!relativePath) return;
-  const fullPath = path.resolve(relativePath);
-  fs.unlink(fullPath, (err) => {
-    if (err && err.code !== 'ENOENT') {
-      console.error(`Failed to delete local file: ${fullPath}`, err);
-    }
-  });
-};
+import { uploadToCloudinary, deleteFromCloudinary, getPublicIdFromUrl } from '../config/cloudinaryConfig.js';
 
 // GET /api/settings
 export const getSettings = async (req, res) => {
@@ -96,38 +84,34 @@ export const updateSettingsImages = async (req, res) => {
     }
 
     const files = req.files || {};
-    const host = `${req.protocol}://${req.get('host')}`;
 
     if (files.profileImage) {
-      if (settings.profileImage) {
-        const oldPath = settings.profileImage.replace(host, '.');
-        deleteLocalFile(oldPath);
-      }
-      settings.profileImage = `${host}/uploads/settings/${files.profileImage[0].filename}`;
+      // Delete old from Cloudinary
+      const oldId = getPublicIdFromUrl(settings.profileImage);
+      if (oldId) await deleteFromCloudinary(oldId);
+      const result = await uploadToCloudinary(files.profileImage[0].buffer, 'portfolio/settings');
+      settings.profileImage = result.secure_url;
     }
 
     if (files.heroImage) {
-      if (settings.heroImage) {
-        const oldPath = settings.heroImage.replace(host, '.');
-        deleteLocalFile(oldPath);
-      }
-      settings.heroImage = `${host}/uploads/settings/${files.heroImage[0].filename}`;
+      const oldId = getPublicIdFromUrl(settings.heroImage);
+      if (oldId) await deleteFromCloudinary(oldId);
+      const result = await uploadToCloudinary(files.heroImage[0].buffer, 'portfolio/settings');
+      settings.heroImage = result.secure_url;
     }
 
     if (files.logo) {
-      if (settings.logo) {
-        const oldPath = settings.logo.replace(host, '.');
-        deleteLocalFile(oldPath);
-      }
-      settings.logo = `${host}/uploads/settings/${files.logo[0].filename}`;
+      const oldId = getPublicIdFromUrl(settings.logo);
+      if (oldId) await deleteFromCloudinary(oldId);
+      const result = await uploadToCloudinary(files.logo[0].buffer, 'portfolio/settings');
+      settings.logo = result.secure_url;
     }
 
     if (files.favicon) {
-      if (settings.favicon) {
-        const oldPath = settings.favicon.replace(host, '.');
-        deleteLocalFile(oldPath);
-      }
-      settings.favicon = `${host}/uploads/settings/${files.favicon[0].filename}`;
+      const oldId = getPublicIdFromUrl(settings.favicon);
+      if (oldId) await deleteFromCloudinary(oldId);
+      const result = await uploadToCloudinary(files.favicon[0].buffer, 'portfolio/settings');
+      settings.favicon = result.secure_url;
     }
 
     await settings.save();
@@ -162,13 +146,13 @@ export const updateSettingsResume = async (req, res) => {
       });
     }
 
-    const host = `${req.protocol}://${req.get('host')}`;
-    if (settings.resumePdf) {
-      const oldPath = settings.resumePdf.replace(host, '.');
-      deleteLocalFile(oldPath);
-    }
+    // Delete old resume from Cloudinary
+    const oldId = getPublicIdFromUrl(settings.resumePdf);
+    if (oldId) await deleteFromCloudinary(oldId, 'raw');
 
-    settings.resumePdf = `${host}/uploads/resume/${files.resumePdf[0].filename}`;
+    // Upload new resume as raw resource type
+    const result = await uploadToCloudinary(files.resumePdf[0].buffer, 'portfolio/resume', 'raw');
+    settings.resumePdf = result.secure_url;
     await settings.save();
 
     return res.status(200).json({
@@ -196,9 +180,9 @@ export const deleteSettingsResume = async (req, res) => {
       });
     }
 
-    const host = `${req.protocol}://${req.get('host')}`;
-    const oldPath = settings.resumePdf.replace(host, '.');
-    deleteLocalFile(oldPath);
+    // Delete from Cloudinary
+    const publicId = getPublicIdFromUrl(settings.resumePdf);
+    if (publicId) await deleteFromCloudinary(publicId, 'raw');
 
     settings.resumePdf = undefined;
     await settings.save();

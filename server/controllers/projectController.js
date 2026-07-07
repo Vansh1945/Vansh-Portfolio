@@ -1,19 +1,5 @@
-import fs from 'fs';
-import path from 'path';
 import Project from '../models/Project.js';
-
-// Helper to delete local uploaded files
-const deleteLocalFile = (fileUrl) => {
-  if (fileUrl && fileUrl.includes('/uploads/projects/')) {
-    const filename = fileUrl.split('/uploads/projects/')[1];
-    const filePath = path.join(process.cwd(), 'uploads', 'projects', filename);
-    if (fs.existsSync(filePath)) {
-      fs.unlink(filePath, (err) => {
-        if (err) console.error(`Error deleting file: ${filePath}`, err);
-      });
-    }
-  }
-};
+import { uploadToCloudinary, deleteFromCloudinary, getPublicIdFromUrl } from '../config/cloudinaryConfig.js';
 
 // Parse array inputs which might be sent as stringified JSON or comma-separated lists
 const parseArrayField = (field) => {
@@ -164,16 +150,19 @@ export const createProject = async (req, res) => {
 
     let coverImage = '';
     if (req.files && req.files.coverImage && req.files.coverImage[0]) {
-      coverImage = `${req.protocol}://${req.get('host')}/uploads/projects/${req.files.coverImage[0].filename}`;
+      const result = await uploadToCloudinary(req.files.coverImage[0].buffer, 'portfolio/projects');
+      coverImage = result.secure_url;
     } else {
       return res.status(400).json({ success: false, message: 'Cover image is required' });
     }
 
     let gallery = [];
     if (req.files && req.files.galleryImages) {
-      gallery = req.files.galleryImages.map(
-        file => `${req.protocol}://${req.get('host')}/uploads/projects/${file.filename}`
+      const uploadPromises = req.files.galleryImages.map(file =>
+        uploadToCloudinary(file.buffer, 'portfolio/projects')
       );
+      const results = await Promise.all(uploadPromises);
+      gallery = results.map(r => r.secure_url);
     }
 
     const newProject = new Project({
@@ -201,18 +190,6 @@ export const createProject = async (req, res) => {
       data: newProject
     });
   } catch (error) {
-    // Delete uploaded files on failure
-    if (req.files) {
-      if (req.files.coverImage && req.files.coverImage[0]) {
-        fs.unlinkSync(req.files.coverImage[0].path);
-      }
-      if (req.files.galleryImages) {
-        req.files.galleryImages.forEach(file => {
-          fs.unlinkSync(file.path);
-        });
-      }
-    }
-
     res.status(500).json({
       success: false,
       message: 'Failed to create project.',
@@ -248,19 +225,31 @@ export const updateProject = async (req, res) => {
 
     // Handle single coverImage update
     if (req.files && req.files.coverImage && req.files.coverImage[0]) {
-      deleteLocalFile(project.coverImage);
-      updateData.coverImage = `${req.protocol}://${req.get('host')}/uploads/projects/${req.files.coverImage[0].filename}`;
+      // Delete old cover from Cloudinary
+      const oldPublicId = getPublicIdFromUrl(project.coverImage);
+      if (oldPublicId) {
+        await deleteFromCloudinary(oldPublicId);
+      }
+      const result = await uploadToCloudinary(req.files.coverImage[0].buffer, 'portfolio/projects');
+      updateData.coverImage = result.secure_url;
     }
 
     // Handle galleryImages replacement
     if (req.files && req.files.galleryImages && req.files.galleryImages.length > 0) {
-      // Clear old gallery images
+      // Delete old gallery images from Cloudinary
       if (project.gallery && project.gallery.length > 0) {
-        project.gallery.forEach(fileUrl => deleteLocalFile(fileUrl));
+        const deletePromises = project.gallery.map(url => {
+          const publicId = getPublicIdFromUrl(url);
+          return publicId ? deleteFromCloudinary(publicId) : Promise.resolve();
+        });
+        await Promise.all(deletePromises);
       }
-      updateData.gallery = req.files.galleryImages.map(
-        file => `${req.protocol}://${req.get('host')}/uploads/projects/${file.filename}`
+      // Upload new gallery images
+      const uploadPromises = req.files.galleryImages.map(file =>
+        uploadToCloudinary(file.buffer, 'portfolio/projects')
       );
+      const results = await Promise.all(uploadPromises);
+      updateData.gallery = results.map(r => r.secure_url);
     }
 
     const updatedProject = await Project.findByIdAndUpdate(id, updateData, {
@@ -292,12 +281,19 @@ export const deleteProject = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Project not found.' });
     }
 
-    // Delete Cover Image from disk
-    deleteLocalFile(project.coverImage);
+    // Delete Cover Image from Cloudinary
+    const coverPublicId = getPublicIdFromUrl(project.coverImage);
+    if (coverPublicId) {
+      await deleteFromCloudinary(coverPublicId);
+    }
 
-    // Delete Gallery Images from disk
+    // Delete Gallery Images from Cloudinary
     if (project.gallery && project.gallery.length > 0) {
-      project.gallery.forEach(fileUrl => deleteLocalFile(fileUrl));
+      const deletePromises = project.gallery.map(url => {
+        const publicId = getPublicIdFromUrl(url);
+        return publicId ? deleteFromCloudinary(publicId) : Promise.resolve();
+      });
+      await Promise.all(deletePromises);
     }
 
     await Project.findByIdAndDelete(id);
