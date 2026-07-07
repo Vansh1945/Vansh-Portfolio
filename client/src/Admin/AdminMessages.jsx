@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { API_URL } from '../config';
-import { Mail, MailOpen, Trash2, ArrowLeft, Loader, Calendar, User, Info } from 'lucide-react';
+import { Mail, MailOpen, Trash2, ArrowLeft, Loader, Calendar, User, Info, Phone, AtSign } from 'lucide-react';
 
 const AdminMessages = () => {
   const navigate = useNavigate();
@@ -117,18 +117,12 @@ const AdminMessages = () => {
                 className={`bg-white border rounded-2xl p-5 md:p-6 transition-all duration-200 ${msg.read ? 'border-gray-100 opacity-80' : 'border-primary/20 shadow-sm ring-1 ring-primary/5'
                   }`}
               >
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-50 pb-4 mb-4">
-                  {/* Meta Details */}
-                  <div className="space-y-1">
-                    <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ${msg.read ? 'bg-gray-100 text-gray-500' : 'bg-primary/10 text-primary'
-                      }`}>
-                      {msg.read ? 'Read' : 'New Message'}
-                    </span>
-                    <h3 className="text-sm font-bold text-gray-900 flex items-center gap-1.5 pt-1">
-                      <User className="w-3.5 h-3.5 text-gray-400" /> {msg.name}
-                      <span className="text-xxs text-gray-400 font-medium">({msg.email})</span>
-                    </h3>
-                  </div>
+                {/* Top Row: Status Badge + Actions */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-50 pb-4 mb-4">
+                  <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider w-fit ${msg.read ? 'bg-gray-100 text-gray-500' : 'bg-primary/10 text-primary'
+                    }`}>
+                    {msg.read ? 'Read' : 'New Message'}
+                  </span>
 
                   {/* Actions */}
                   <div className="flex items-center gap-2 self-start sm:self-auto">
@@ -155,12 +149,46 @@ const AdminMessages = () => {
                   </div>
                 </div>
 
-                {/* Message Body */}
+                {/* Contact Details Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-4">
+                  {/* Name */}
+                  <div className="flex items-center gap-2 bg-gray-50 px-3 py-2.5 rounded-xl">
+                    <User className="w-4 h-4 text-primary flex-shrink-0" />
+                    <div className="min-w-0">
+                      <p className="text-[10px] text-gray-400 font-semibold uppercase tracking-wider">Name</p>
+                      <p className="text-sm font-bold text-gray-900 truncate">{msg.name}</p>
+                    </div>
+                  </div>
+
+                  {/* Email */}
+                  <div className="flex items-center gap-2 bg-gray-50 px-3 py-2.5 rounded-xl">
+                    <AtSign className="w-4 h-4 text-primary flex-shrink-0" />
+                    <div className="min-w-0">
+                      <p className="text-[10px] text-gray-400 font-semibold uppercase tracking-wider">Email</p>
+                      <a href={`mailto:${msg.email}`} className="text-sm font-bold text-primary hover:underline truncate block">{msg.email}</a>
+                    </div>
+                  </div>
+
+                  {/* Phone */}
+                  <div className="flex items-center gap-2 bg-gray-50 px-3 py-2.5 rounded-xl">
+                    <Phone className="w-4 h-4 text-primary flex-shrink-0" />
+                    <div className="min-w-0">
+                      <p className="text-[10px] text-gray-400 font-semibold uppercase tracking-wider">Phone</p>
+                      {msg.phone ? (
+                        <a href={`tel:${msg.phone}`} className="text-sm font-bold text-gray-900 hover:text-primary truncate block">{msg.phone}</a>
+                      ) : (
+                        <p className="text-sm font-medium text-gray-400 italic">Not provided</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Subject & Message Body */}
                 <div className="space-y-2 text-left">
                   <div className="flex items-center gap-1.5 text-xxs font-bold text-gray-400 uppercase">
                     <Info className="w-3.5 h-3.5" /> Subject: <span className="text-gray-700 font-black">{msg.subject}</span>
                   </div>
-                  <p className="text-xs text-gray-600 leading-relaxed bg-gray-50/50 p-4 rounded-xl border border-gray-100/50 white-space-pre-wrap">
+                  <p className="text-xs text-gray-600 leading-relaxed bg-gray-50/50 p-4 rounded-xl border border-gray-100/50" style={{ whiteSpace: 'pre-wrap' }}>
                     {msg.message}
                   </p>
                   <div className="flex items-center gap-1 text-[10px] text-gray-400 font-semibold pt-1 justify-end">

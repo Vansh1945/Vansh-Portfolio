@@ -6,7 +6,7 @@ const getJwtSecret = () => process.env.JWT_SECRET || 'fallback_secret_key';
 // Helper to generate final Admin Access Token
 const generateToken = (id) => {
   return jwt.sign({ id }, getJwtSecret(), {
-    expiresIn: '1d',
+    expiresIn: '7d',
   });
 };
 
@@ -24,7 +24,7 @@ export const loginUser = async (req, res) => {
     if (adminUser && (await adminUser.matchPassword(password))) {
       // Create a 5-minute temporary token indicating password success
       const tempToken = jwt.sign({ id: adminUser._id, step: 'pin' }, getJwtSecret(), {
-        expiresIn: '5m',
+        expiresIn: '10m',
       });
 
       res.status(200).json({

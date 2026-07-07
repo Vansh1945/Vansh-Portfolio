@@ -1,5 +1,22 @@
+import axios from 'axios';
+
 export const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 export const API_URL = `${BASE_URL.replace(/\/$/, '')}/api/`;
+
+// Global Axios interceptor: auto-redirect to login on expired/invalid token (401)
+axios.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      // Only redirect if we're on an admin page (not public pages)
+      if (window.location.pathname.startsWith('/admin') && !window.location.pathname.includes('/admin/login')) {
+        localStorage.removeItem('adminToken');
+        window.location.href = '/admin/login';
+      }
+    }
+    return Promise.reject(error);
+  }
+);
 
 /**
  * Resolve image URLs to correct absolute paths.
