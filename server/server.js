@@ -15,8 +15,13 @@ import experienceRoutes from './routes/experienceRoutes.js';
 import settingsRoutes from './routes/settingsRoutes.js';
 import skillRoutes from './routes/skillRoutes.js';
 
-// Load environment variables
-dotenv.config();
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// Load environment variables relative to this file
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 const app = express();
 const PORT = process.env.PORT || 5000;
