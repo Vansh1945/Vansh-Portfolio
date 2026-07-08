@@ -87,7 +87,7 @@ const Navbar = () => {
                 <div className="flex items-center">
                     <Link to="/" className="text-xl font-bold text-gray-900 tracking-tight font-cursive flex items-center">
                         {settings?.logo ? (
-                            <img src={getImageUrl(settings.logo)} className="h-7 w-auto object-contain" alt={settings.websiteName} />
+                            <img src={getImageUrl(settings.logo)} className="h-10 md:h-12 w-auto object-contain" alt={settings.websiteName} />
                         ) : (
                             <>{settings?.websiteName || 'Vansh'}<span className="text-primary">.</span></>
                         )}
